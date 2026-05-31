@@ -1,0 +1,407 @@
+<!DOCTYPE html><html lang="zh-CN" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>薯鲜生 - 商品管理</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ba1a1a",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#ffb68e",
+                    "secondary": "#605e59",
+                    "secondary-fixed-dim": "#cac6bf",
+                    "on-secondary-container": "#67645f",
+                    "primary": "#964407",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#006480",
+                    "tertiary-fixed-dim": "#70d2fa",
+                    "secondary-fixed": "#e6e2db",
+                    "on-secondary-fixed": "#1d1c18",
+                    "surface-container-low": "#fff1ea",
+                    "on-tertiary-fixed-variant": "#004d63",
+                    "on-tertiary-fixed": "#001f2a",
+                    "on-secondary-fixed-variant": "#484742",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#f6e5dc",
+                    "surface-bright": "#fff8f5",
+                    "on-surface": "#221a14",
+                    "surface-container": "#fceae1",
+                    "tertiary-container": "#007ea1",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#f0dfd6",
+                    "on-surface-variant": "#554339",
+                    "surface-variant": "#f0dfd6",
+                    "on-primary-container": "#fffbff",
+                    "surface": "#fff8f5",
+                    "inverse-primary": "#ffb68e",
+                    "outline-variant": "#dbc1b5",
+                    "primary-fixed": "#ffdbca",
+                    "on-primary": "#ffffff",
+                    "background": "#fff8f5",
+                    "tertiary-fixed": "#bce9ff",
+                    "on-primary-fixed-variant": "#773300",
+                    "on-background": "#221a14",
+                    "inverse-surface": "#382e28",
+                    "surface-tint": "#99460a",
+                    "on-tertiary-container": "#fbfdff",
+                    "surface-dim": "#e8d7ce",
+                    "on-primary-fixed": "#331200",
+                    "secondary-container": "#e6e2db",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "primary-container": "#b65c21",
+                    "outline": "#887368",
+                    "inverse-on-surface": "#ffede4"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "card-gap": "24px",
+                    "base": "8px",
+                    "container-padding-desktop": "40px",
+                    "section-margin": "48px",
+                    "table-row-padding": "18px",
+                    "container-padding-mobile": "20px"
+            },
+            "fontFamily": {
+                    "headline-sm": [
+                            "Hanken Grotesk"
+                    ],
+                    "body-md": [
+                            "Hanken Grotesk"
+                    ],
+                    "body-lg": [
+                            "Hanken Grotesk"
+                    ],
+                    "headline-lg-mobile": [
+                            "Hanken Grotesk"
+                    ],
+                    "headline-lg": [
+                            "Hanken Grotesk"
+                    ],
+                    "label-md": [
+                            "Hanken Grotesk"
+                    ],
+                    "headline-md": [
+                            "Hanken Grotesk"
+                    ]
+            },
+            "fontSize": {
+                    "headline-sm": [
+                            "20px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "22px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-lg": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-lg": [
+                            "30px",
+                            {
+                                    "lineHeight": "40px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-md": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.02em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+            }
+        },
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .cream-shadow {
+            box-shadow: 0 4px 15px -2px rgba(58, 48, 42, 0.04);
+        }
+        .table-row-hover:hover {
+            background-color: theme('colors.surface-bright');
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest dark:bg-inverse-surface shadow-sm dark:shadow-none flex flex-col h-full py-6 px-4 z-20">
+<div class="mb-8 px-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-headline-sm text-headline-sm">
+                薯
+            </div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">薯鲜生</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">管理后台</p>
+</div>
+</div>
+<ul class="flex flex-col gap-2 flex-1">
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-lg text-body-lg">工作台</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary dark:text-primary-fixed-dim font-bold bg-primary-fixed dark:bg-primary-container transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2" data-weight="fill" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-body-lg text-body-lg">商品管理</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-body-lg text-body-lg">订单处理</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-lg text-body-lg">数据中心</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-64 flex flex-col h-screen overflow-hidden">
+<!-- TopAppBar -->
+<header class="h-16 w-full sticky top-0 z-10 bg-background dark:bg-background flex justify-between items-center px-10">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md font-semibold text-on-surface dark:text-on-surface-variant">商品管理</h2>
+</div>
+<div class="flex items-center gap-6">
+<button class="flex items-center gap-2 text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors opacity-90 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">退出登录</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A close-up headshot of an Asian woman with a friendly smile, professional yet approachable, wearing a neutral-toned blouse. Soft natural lighting, clean white background, high-resolution portrait, suitable for a professional avatar in a minimalist modern application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDT8EiuFiRON5a15H3NS4cVZK3J8MiNlFEDrMCmH9w05hEYidR3lAqO-RllUfSmztwYdYoKrVZoibHbI8zgzXs4aALEV-gToHK8a11yN3l5G8feA_JvYqXcw_-EVpHpU6EFbENvrPOe329hlJugPXt5aXECfcGsJtHCbhm5YTH0Kxj8mKXdLm9ebV_4gg4vLTf7qDddrKqgGF-9Mh-Z188PvLgmrWOXNduQyRA86W0KBgUeiL5KI3OHVaXM2eEFb6_-ZlKpksQcfaU">
+</div>
+</div>
+</header>
+<!-- Page Content Canvas -->
+<main class="flex-1 overflow-y-auto p-container-padding-desktop">
+<!-- Main Card -->
+<div class="bg-surface-container-lowest rounded-[24px] cream-shadow p-8 flex flex-col h-full min-h-[600px]">
+<!-- Action Bar -->
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">全部商品</h3><div class="flex items-center gap-4 ml-8 flex-1">
+  <div class="relative flex-1 max-w-md">
+    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant opacity-60">search</span>
+    <input type="text" placeholder="搑產商吁吃礰..." class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-full font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+  </div>
+  <div class="relative min-w-[140px]">
+    <select class="w-full appearance-none bg-surface-container-lowest border border-outline-variant rounded-full px-4 py-2 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all pr-10">
+      <option value="all">全逃</option>
+      <option value="fresh">甑醉考吁</option>
+      <option value="creative">文刓周脙</option>
+    </select>
+    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+  </div><button class="flex items-center gap-1.5 px-4 py-2 bg-red-50 text-red-600 rounded-full font-label-md text-label-md border border-red-100 hover:bg-red-100 transition-colors shrink-0">
+    <span class="material-symbols-outlined text-[18px]">warning</span>
+    库存预警
+</button>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label-md text-label-md hover:bg-surface-tint transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        发布商品
+                    </button>
+</div>
+<!-- Data Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-on-surface-variant font-label-md text-label-md border-b border-surface-container-highest">
+<th class="pb-4 font-medium pl-4">商品信息</th>
+<th class="pb-4 font-medium">分类</th>
+<th class="pb-4 font-medium">库存数量</th>
+<th class="pb-4 font-medium">当前价格</th>
+<th class="pb-4 font-medium">状态</th>
+<th class="pb-4 font-medium pr-4">操作</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-highest/50">
+<!-- Row 1 -->
+<tr class="table-row-hover transition-colors group">
+<td class="py-table-row-padding pl-4">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-surface-container-low">
+<img alt="湛江普薯32号" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyT8aPC5rC5YPtdQFCkGy30ZyvxtS8hcM4RAYL6DsXk-krpQ28Ibh_6t6Lwz0RF89nC_qY0DgYA3OjT8a9Fp0QiGuwB8cky4mRUBttchCY_G1v1qYF-7vKFvb8IoaDmr3Xm2D6ofThkNxxtHxCoxp5MGhdfFLrgjqavv9R8oxHY_l5TmdiAIE43Pvmp_Japo_5iYlou3LgGnTFgdD8joNfsmbA6GANIsVxCY6P2nQpbSc9Ffrmg-e_iooHOQpsbFel3IPyt-LWj40">
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-body-lg text-body-lg font-medium text-on-surface">「湛江普薯32号」</span>
+<span class="font-label-md text-label-md text-on-surface-variant">「原产地直发·香甜软糯」</span>
+</div>
+</div>
+</td>
+<td class="py-table-row-padding">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-tertiary-container/10 text-tertiary-container">
+                                        生鲜农品
+                                    </span>
+</td>
+<td class="py-table-row-padding">
+<span class="font-body-md text-body-md text-on-surface">128</span>
+</td>
+<td class="py-table-row-padding">
+<span class="font-body-lg text-body-lg font-medium text-primary">¥29.9</span>
+</td>
+<td class="py-table-row-padding">
+<!-- Toggle On -->
+<button class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+<span class="inline-block h-4 w-4 translate-x-6 rounded-full bg-white transition-transform shadow-sm"></span>
+</button>
+</td>
+<td class="py-table-row-padding pr-4">
+<div class="flex items-center gap-3">
+<button class="text-secondary hover:text-primary font-label-md text-label-md transition-colors">编辑</button>
+<button class="text-secondary hover:text-error font-label-md text-label-md transition-colors">删除</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="table-row-hover transition-colors group">
+<td class="py-table-row-padding pl-4">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-surface-container-low">
+<img alt="冰激凌紫薯" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoMTAbMHr_dwUnGrbls1FT8z1BTHv_Rvcf_goKYlhIYjmS8aznxbl_MCJ26T0afC-O5yYNkddaoigBSVlqaHjSQDg-inuZARIcFxeRuagLVmwZvtZL5l3jkhuNQoAJqAew6XQpdrqYg7dKTaPLt-J7aiw3eMz1hjym8xZMJXbXngsTizuul7mArUciphhon1KbiUvIGHLZvAiq1ioMia0Dfd0NNol-Ej-hSIR5RJUN9yCaqe7-epqD8qnr4p4I6X6ewSW1NqUdIWE">
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-body-lg text-body-lg font-medium text-on-surface">「冰激凌紫薯」</span>
+<span class="font-label-md text-label-md text-on-surface-variant">「极粉极密·优质原生态农产品」</span>
+</div>
+</div>
+</td>
+<td class="py-table-row-padding">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-tertiary-container/10 text-tertiary-container">
+                                        生鲜农品
+                                    </span>
+</td>
+<td class="py-table-row-padding">
+<span class="font-body-md text-body-md text-error font-medium">5</span>
+</td>
+<td class="py-table-row-padding">
+<span class="font-body-lg text-body-lg font-medium text-primary">¥35.0</span>
+</td>
+<td class="py-table-row-padding">
+<!-- Toggle On -->
+<button class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+<span class="inline-block h-4 w-4 translate-x-6 rounded-full bg-white transition-transform shadow-sm"></span>
+</button>
+</td>
+<td class="py-table-row-padding pr-4">
+<div class="flex items-center gap-3">
+<button class="text-secondary hover:text-primary font-label-md text-label-md transition-colors">编辑</button>
+<button class="text-secondary hover:text-error font-label-md text-label-md transition-colors">删除</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="table-row-hover transition-colors group">
+<td class="py-table-row-padding pl-4">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-surface-container-low">
+<img alt="番番小芋蒲织挂件" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4V2AUGMyVkrCGOfiwMA9itsMBHqTRFx9nb2dkh2qP0AD_quE2za_5jiXEohDcbQTjJGQNsuyu0Vx_bkbVJ_4XVcxTjDkoShtDn45guZXAhmmQHouXioHVv6IKD5-K5_CEzk4c98B6bpW0c-S6GbACpB9zU_I1v-B6zVzRhsFSr0Vg3kGcJCfUT_qAbnWu_VWoA4tZRk9aocgSoy67cIkfgh8ml44AhF8IsLCXwz2BuNfi2qC0MpSTlPEWCIdtqEyN-KUdRQDWkP0">
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-body-lg text-body-lg font-medium text-on-surface">「番番小芋蒲织挂件」</span>
+<span class="font-label-md text-label-md text-on-surface-variant">「湛江非遗蒲织工艺·IP周边」</span>
+</div>
+</div>
+</td>
+<td class="py-table-row-padding">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary-container/10 text-primary-container">
+                                        文创周边
+                                    </span>
+</td>
+<td class="py-table-row-padding">
+<span class="font-body-md text-body-md text-on-surface">42</span>
+</td>
+<td class="py-table-row-padding">
+<span class="font-body-lg text-body-lg font-medium text-primary">¥68.0</span>
+</td>
+<td class="py-table-row-padding">
+<!-- Toggle Off -->
+<button class="relative inline-flex h-6 w-11 items-center rounded-full bg-surface-container-highest transition-colors focus:outline-none focus:ring-2 focus:ring-surface-container-highest focus:ring-offset-2">
+<span class="inline-block h-4 w-4 translate-x-1 rounded-full bg-white transition-transform shadow-sm"></span>
+</button>
+</td>
+<td class="py-table-row-padding pr-4">
+<div class="flex items-center gap-3">
+<button class="text-secondary hover:text-primary font-label-md text-label-md transition-colors">编辑</button>
+<button class="text-secondary hover:text-error font-label-md text-label-md transition-colors">删除</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+<script>
+        // Simple toggle switch logic for visual feedback
+        document.querySelectorAll('button[role="switch"], button.relative.inline-flex').forEach(switchBtn => {
+            switchBtn.addEventListener('click', function() {
+                const knob = this.querySelector('span');
+                const isCurrentlyOn = this.classList.contains('bg-primary');
+                
+                if (isCurrentlyOn) {
+                    this.classList.remove('bg-primary');
+                    this.classList.add('bg-surface-container-highest');
+                    knob.classList.remove('translate-x-6');
+                    knob.classList.add('translate-x-1');
+                } else {
+                    this.classList.remove('bg-surface-container-highest');
+                    this.classList.add('bg-primary');
+                    knob.classList.remove('translate-x-1');
+                    knob.classList.add('translate-x-6');
+                }
+            });
+        });
+    </script>
+
+
+</body></html>
