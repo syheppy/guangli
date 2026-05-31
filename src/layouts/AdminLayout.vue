@@ -83,10 +83,11 @@ const menuItems = computed(() => [
   { label: '订单处理', icon: 'receipt_long', to: '/orders', active: route.path.startsWith('/orders') },
   { label: '数据中心', icon: 'analytics', to: '/analytics', active: route.path.startsWith('/analytics') },
   { label: '横幅管理', icon: 'image', to: '/banners', active: route.path.startsWith('/banners') },
+  { label: '弹窗管理', icon: 'campaign', to: '/popup', active: route.path.startsWith('/popup') },
 ])
 
 const pageTitle = computed(() => {
-  const map = { '/products': '商品管理', '/orders': '订单处理', '/': '工作台', '/analytics': '数据中心', '/banners': '横幅管理' }
+  const map = { '/products': '商品管理', '/orders': '订单处理', '/': '工作台', '/analytics': '数据中心', '/banners': '横幅管理', '/popup': '弹窗管理' }
   return map[route.path] || '商品管理'
 })
 </script>

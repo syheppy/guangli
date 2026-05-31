@@ -5,6 +5,7 @@ import ProductList from '../views/ProductList.vue'
 import Orders from '../views/Orders.vue'
 import Analytics from '../views/Analytics.vue'
 import BannersView from '../views/BannersView.vue'
+import PopupView from '../views/PopupView.vue'
 import LoginView from '../views/LoginView.vue'
 import { useAuth } from '../composables/useAuth.js'
 
@@ -43,6 +44,11 @@ const routes = [
         path: 'banners',
         name: 'Banners',
         component: BannersView,
+      },
+      {
+        path: 'popup',
+        name: 'Popup',
+        component: PopupView,
       },
     ],
   },

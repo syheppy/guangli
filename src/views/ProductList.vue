@@ -287,14 +287,22 @@ function mapRow(row) {
   return {
     id: row.id,
     name: row.name,
-    subtitle: row.description,
+    description: row.description,
     category: row.category,
     stock: row.stock,
     price: Number(row.price),
+    original_price: row.original_price,
+    origin: row.origin,
+    taste: row.taste,
+    feature: row.feature,
+    rating: row.rating,
+    review_count: row.review_count,
+    specs: row.specs,
     active: row.status,
     is_hot: row.is_hot || false,
     is_recommended: row.is_recommended || false,
     image: cacheBustedUrl,
+    image_url: row.image_url,
   }
 }
 
@@ -429,17 +437,26 @@ function openEditDrawer(product) {
 }
 
 async function onDrawerSave(data) {
+  const saveData = {
+    name: data.name,
+    category: data.category,
+    price: Number(data.price),
+    original_price: data.original_price ? Number(data.original_price) : null,
+    stock: Number(data.stock),
+    description: data.description || '',
+    image_url: data.image_url || '',
+    origin: data.origin || '',
+    taste: data.taste || '',
+    feature: data.feature || '甜度爆表',
+    rating: Number(data.rating) || 5.0,
+    review_count: Number(data.review_count) || 0,
+    specs: data.specs || [],
+  }
+
   if (data.id) {
     const { error } = await supabase
       .from('products')
-      .update({
-        name: data.name,
-        category: data.category,
-        price: Number(data.price),
-        stock: Number(data.stock),
-        description: data.subtitle || data.description || '',
-        image_url: data.image_url || '',
-      })
+      .update(saveData)
       .eq('id', data.id)
 
     if (error) {
@@ -450,13 +467,8 @@ async function onDrawerSave(data) {
     const { error } = await supabase
       .from('products')
       .insert({
-        name: data.name,
-        category: data.category,
-        price: Number(data.price),
-        stock: Number(data.stock),
+        ...saveData,
         status: true,
-        description: data.subtitle || data.description || '',
-        image_url: data.image_url || '',
       })
 
     if (error) {

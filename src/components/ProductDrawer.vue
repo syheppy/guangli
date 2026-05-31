@@ -21,7 +21,8 @@
         </div>
 
         <!-- Form Content -->
-        <div class="flex-1 overflow-y-auto p-8 space-y-8">
+        <div class="flex-1 overflow-y-auto p-8 space-y-6">
+          <!-- 商品名称 -->
           <div class="space-y-2">
             <label class="block font-medium text-[#3A302A]">商品名称</label>
             <input
@@ -32,6 +33,7 @@
             />
           </div>
 
+          <!-- 商品分类 -->
           <div class="space-y-2">
             <label class="block font-medium text-[#3A302A]">商品分类</label>
             <div class="relative">
@@ -46,7 +48,8 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
+          <!-- 价格和库存 -->
+          <div class="grid grid-cols-3 gap-4">
             <div class="space-y-2">
               <label class="block font-medium text-[#3A302A]">价格 (¥)</label>
               <input
@@ -57,7 +60,16 @@
               />
             </div>
             <div class="space-y-2">
-              <label class="block font-medium text-[#3A302A]">库存数量</label>
+              <label class="block font-medium text-[#3A302A]">原价 (¥)</label>
+              <input
+                v-model="form.original_price"
+                class="w-full px-4 py-3 rounded-xl border border-[#ECE6DC] focus:ring-2 focus:ring-[#C2652A]/20 focus:border-[#C2652A] outline-none transition-all"
+                placeholder="划线价"
+                type="number"
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="block font-medium text-[#3A302A]">库存</label>
               <input
                 v-model="form.stock"
                 class="w-full px-4 py-3 rounded-xl border border-[#ECE6DC] focus:ring-2 focus:ring-[#C2652A]/20 focus:border-[#C2652A] outline-none transition-all"
@@ -65,6 +77,100 @@
                 type="number"
               />
             </div>
+          </div>
+
+          <!-- 产地、口感、产品特色 -->
+          <div class="grid grid-cols-3 gap-4">
+            <div class="space-y-2">
+              <label class="block font-medium text-[#3A302A]">产地</label>
+              <input
+                v-model="form.origin"
+                class="w-full px-4 py-3 rounded-xl border border-[#ECE6DC] focus:ring-2 focus:ring-[#C2652A]/20 focus:border-[#C2652A] outline-none transition-all"
+                placeholder="如：福建漳浦"
+                type="text"
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="block font-medium text-[#3A302A]">口感</label>
+              <input
+                v-model="form.taste"
+                class="w-full px-4 py-3 rounded-xl border border-[#ECE6DC] focus:ring-2 focus:ring-[#C2652A]/20 focus:border-[#C2652A] outline-none transition-all"
+                placeholder="如：粉糯香甜"
+                type="text"
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="block font-medium text-[#3A302A]">产品特色</label>
+              <input
+                v-model="form.feature"
+                class="w-full px-4 py-3 rounded-xl border border-[#ECE6DC] focus:ring-2 focus:ring-[#C2652A]/20 focus:border-[#C2652A] outline-none transition-all"
+                placeholder="如：甜度爆表"
+                type="text"
+              />
+            </div>
+          </div>
+
+          <!-- 评分和评价数 -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label class="block font-medium text-[#3A302A]">评分</label>
+              <input
+                v-model="form.rating"
+                class="w-full px-4 py-3 rounded-xl border border-[#ECE6DC] focus:ring-2 focus:ring-[#C2652A]/20 focus:border-[#C2652A] outline-none transition-all"
+                placeholder="5.0"
+                type="number"
+                step="0.1"
+                min="0"
+                max="5"
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="block font-medium text-[#3A302A]">评价数</label>
+              <input
+                v-model="form.review_count"
+                class="w-full px-4 py-3 rounded-xl border border-[#ECE6DC] focus:ring-2 focus:ring-[#C2652A]/20 focus:border-[#C2652A] outline-none transition-all"
+                placeholder="0"
+                type="number"
+              />
+            </div>
+          </div>
+
+          <!-- 规格编辑器 -->
+          <div class="space-y-2">
+            <label class="block font-medium text-[#3A302A]">规格</label>
+            <div class="space-y-2">
+              <div
+                v-for="(spec, index) in form.specs"
+                :key="index"
+                class="flex items-center gap-2"
+              >
+                <input
+                  v-model="spec.name"
+                  class="flex-1 px-4 py-2.5 rounded-xl border border-[#ECE6DC] focus:ring-2 focus:ring-[#C2652A]/20 focus:border-[#C2652A] outline-none transition-all"
+                  placeholder="规格名称，如：3KG/箱"
+                  type="text"
+                />
+                <input
+                  v-model="spec.price"
+                  class="w-28 px-4 py-2.5 rounded-xl border border-[#ECE6DC] focus:ring-2 focus:ring-[#C2652A]/20 focus:border-[#C2652A] outline-none transition-all"
+                  placeholder="价格"
+                  type="number"
+                />
+                <button
+                  @click="removeSpec(index)"
+                  class="w-10 h-10 rounded-xl flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors"
+                >
+                  <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+              </div>
+            </div>
+            <button
+              @click="addSpec"
+              class="flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] text-primary hover:bg-primary/10 transition-colors"
+            >
+              <span class="material-symbols-outlined text-[18px]">add</span>
+              添加规格
+            </button>
           </div>
 
           <!-- Image Upload -->
@@ -116,10 +222,11 @@
             </div>
           </div>
 
+          <!-- 商品详情描述 -->
           <div class="space-y-2">
             <label class="block font-medium text-[#3A302A]">商品详情描述</label>
             <textarea
-              v-model="form.subtitle"
+              v-model="form.description"
               class="w-full px-4 py-3 rounded-xl border border-[#ECE6DC] focus:ring-2 focus:ring-[#C2652A]/20 focus:border-[#C2652A] outline-none transition-all resize-none"
               placeholder="请输入商品详细介绍..."
               rows="4"
@@ -167,8 +274,15 @@ const emptyForm = () => ({
   name: '',
   category: '',
   price: '',
+  original_price: '',
   stock: '',
-  subtitle: '',
+  origin: '',
+  taste: '',
+  feature: '甜度爆表',
+  rating: '5.0',
+  review_count: '0',
+  specs: [],
+  description: '',
   image_url: '',
 })
 
@@ -177,20 +291,43 @@ const form = reactive(emptyForm())
 watch(() => props.visible, (val) => {
   if (!val) return
   if (props.product) {
+    // 解析 specs
+    let specs = []
+    if (props.product.specs) {
+      specs = typeof props.product.specs === 'string'
+        ? JSON.parse(props.product.specs)
+        : props.product.specs
+    }
+
     Object.assign(form, {
       name: props.product.name || '',
       category: props.product.category || '',
       price: props.product.price ?? '',
+      original_price: props.product.original_price ?? '',
       stock: props.product.stock ?? '',
-      subtitle: props.product.subtitle || '',
-      image_url: props.product.image || '',
+      origin: props.product.origin || '',
+      taste: props.product.taste || '',
+      feature: props.product.feature || '甜度爆表',
+      rating: props.product.rating ?? '5.0',
+      review_count: props.product.review_count ?? '0',
+      specs: specs.map(s => ({ ...s })),
+      description: props.product.description || '',
+      image_url: props.product.image_url || '',
     })
-    previewUrl.value = props.product.image || ''
+    previewUrl.value = props.product.image_url || ''
   } else {
     Object.assign(form, emptyForm())
     previewUrl.value = ''
   }
 })
+
+function addSpec() {
+  form.specs.push({ name: '', price: '' })
+}
+
+function removeSpec(index) {
+  form.specs.splice(index, 1)
+}
 
 async function onFileSelected(e) {
   const file = e.target.files?.[0]
@@ -219,7 +356,6 @@ async function onFileSelected(e) {
   previewUrl.value = data.publicUrl
   uploading.value = false
 
-  // reset input so re-selecting the same file triggers change
   e.target.value = ''
 }
 
@@ -233,7 +369,17 @@ function close() {
 }
 
 function onSubmit() {
-  const data = { ...form }
+  const data = {
+    ...form,
+    // 处理数值类型
+    price: Number(form.price) || 0,
+    original_price: form.original_price ? Number(form.original_price) : null,
+    stock: Number(form.stock) || 0,
+    rating: Number(form.rating) || 5.0,
+    review_count: Number(form.review_count) || 0,
+    // 过滤空规格
+    specs: form.specs.filter(s => s.name && s.price),
+  }
   if (props.product) data.id = props.product.id
   emit('save', data)
 }
