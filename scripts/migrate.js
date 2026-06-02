@@ -10,10 +10,11 @@
  *   会在 Supabase 控制台 SQL Editor 中输出需要执行的建表 SQL。
  */
 
+import 'dotenv/config'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = 'https://wiwigmrdddykgfawphtm.supabase.co'
-const supabaseKey = 'sb_publishable_UEQ6GVeznIvZOneFgcYBlQ_sPwSstLh'
+const supabaseUrl = process.env.VITE_SUPABASE_URL
+const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 const CREATE_TABLE_SQL = `
