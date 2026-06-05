@@ -84,10 +84,11 @@ const menuItems = computed(() => [
   { label: '数据中心', icon: 'analytics', to: '/analytics', active: route.path.startsWith('/analytics') },
   { label: '横幅管理', icon: 'image', to: '/banners', active: route.path.startsWith('/banners') },
   { label: '弹窗管理', icon: 'campaign', to: '/popup', active: route.path.startsWith('/popup') },
+  { label: '优惠券管理', icon: 'confirmation_number', to: '/coupons', active: route.path.startsWith('/coupons') },
 ])
 
 const pageTitle = computed(() => {
-  const map = { '/products': '商品管理', '/orders': '订单处理', '/': '工作台', '/analytics': '数据中心', '/banners': '横幅管理', '/popup': '弹窗管理' }
+  const map = { '/products': '商品管理', '/orders': '订单处理', '/': '工作台', '/analytics': '数据中心', '/banners': '横幅管理', '/popup': '弹窗管理', '/coupons': '优惠券管理' }
   return map[route.path] || '商品管理'
 })
 </script>
