@@ -519,6 +519,16 @@ async function toggleStatus(product) {
 
 async function toggleHot(product) {
   const newVal = !product.is_hot
+
+  // 开启时检查数量限制
+  if (newVal) {
+    const hotCount = products.value.filter(p => p.is_hot).length
+    if (hotCount >= 3) {
+      alert('热销位已满（最多3个），请先取消一个')
+      return
+    }
+  }
+
   product.is_hot = newVal
   const { error } = await supabase.from('products').update({ is_hot: newVal }).eq('id', product.id)
   if (error) {
