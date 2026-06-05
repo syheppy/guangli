@@ -254,6 +254,7 @@
 import { reactive, watch, computed, ref, onMounted } from 'vue'
 import { supabase } from '../utils/supabase.js'
 import { useCategories } from '../composables/useCategories.js'
+import imageCompression from 'browser-image-compression'
 
 const { categories, fetchCategories } = useCategories()
 onMounted(fetchCategories)
@@ -335,26 +336,39 @@ async function onFileSelected(e) {
 
   uploading.value = true
 
-  const ext = file.name.split('.').pop()
-  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+  try {
+    // 压缩图片：质量 80%，最大宽度 2000px，输出 WebP
+    const compressedFile = await imageCompression(file, {
+      maxSizeMB: 10,
+      maxWidthOrHeight: 1200,
+      useWebWorker: true,
+      initialQuality: 0.7,
+      fileType: 'image/webp',
+    })
 
-  const { error: uploadError } = await supabase.storage
-    .from('products')
-    .upload(fileName, file, { cacheControl: '3600', upsert: false })
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.webp`
 
-  if (uploadError) {
-    console.error('图片上传失败:', uploadError.message)
+    const { error: uploadError } = await supabase.storage
+      .from('products')
+      .upload(fileName, compressedFile, { cacheControl: '3600', upsert: false })
+
+    if (uploadError) {
+      console.error('图片上传失败:', uploadError.message)
+      uploading.value = false
+      return
+    }
+
+    const { data } = supabase.storage
+      .from('products')
+      .getPublicUrl(fileName)
+
+    form.image_url = data.publicUrl
+    previewUrl.value = data.publicUrl
+  } catch (err) {
+    console.error('图片压缩失败:', err.message)
+  } finally {
     uploading.value = false
-    return
   }
-
-  const { data } = supabase.storage
-    .from('products')
-    .getPublicUrl(fileName)
-
-  form.image_url = data.publicUrl
-  previewUrl.value = data.publicUrl
-  uploading.value = false
 
   e.target.value = ''
 }

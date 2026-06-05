@@ -263,6 +263,7 @@ import { ref, computed, onMounted } from 'vue'
 import { supabase } from '../utils/supabase.js'
 import ProductDrawer from '../components/ProductDrawer.vue'
 import { useCategories } from '../composables/useCategories.js'
+import imageCompression from 'browser-image-compression'
 
 const { categories, fetchCategories, addCategory, deleteCategory } = useCategories()
 
@@ -362,29 +363,39 @@ async function uploadCategoryBanner(cat, event) {
 
   cat._uploading = true
 
-  const ext = file.name.split('.').pop()
-  const fileName = `banners/category-${cat.id}-${Date.now()}.${ext}`
+  try {
+    const compressedFile = await imageCompression(file, {
+      maxSizeMB: 10,
+      maxWidthOrHeight: 1200,
+      useWebWorker: true,
+      initialQuality: 0.7,
+      fileType: 'image/webp',
+    })
 
-  const { error: uploadError } = await supabase.storage.from('products').upload(fileName, file, { cacheControl: '3600', upsert: false })
+    const fileName = `banners/category-${cat.id}-${Date.now()}.webp`
 
-  if (uploadError) {
-    alert('上传失败：' + uploadError.message)
+    const { error: uploadError } = await supabase.storage.from('products').upload(fileName, compressedFile, { cacheControl: '3600', upsert: false })
+
+    if (uploadError) {
+      alert('上传失败：' + uploadError.message)
+      return
+    }
+
+    const { data } = supabase.storage.from('products').getPublicUrl(fileName)
+
+    const { error: updateError } = await supabase.from('categories').update({ banner_url: data.publicUrl }).eq('id', cat.id)
+
+    if (updateError) {
+      alert('保存失败：' + updateError.message)
+    } else {
+      cat.banner_url = data.publicUrl
+    }
+  } catch (err) {
+    console.error('图片压缩失败:', err.message)
+  } finally {
     cat._uploading = false
-    return
+    event.target.value = ''
   }
-
-  const { data } = supabase.storage.from('products').getPublicUrl(fileName)
-
-  const { error: updateError } = await supabase.from('categories').update({ banner_url: data.publicUrl }).eq('id', cat.id)
-
-  if (updateError) {
-    alert('保存失败：' + updateError.message)
-  } else {
-    cat.banner_url = data.publicUrl
-  }
-
-  cat._uploading = false
-  event.target.value = ''
 }
 
 async function uploadCategoryIcon(cat, event) {
@@ -393,29 +404,39 @@ async function uploadCategoryIcon(cat, event) {
 
   cat._iconUploading = true
 
-  const ext = file.name.split('.').pop()
-  const fileName = `icons/category-${cat.id}-${Date.now()}.${ext}`
+  try {
+    const compressedFile = await imageCompression(file, {
+      maxSizeMB: 10,
+      maxWidthOrHeight: 1200,
+      useWebWorker: true,
+      initialQuality: 0.7,
+      fileType: 'image/webp',
+    })
 
-  const { error: uploadError } = await supabase.storage.from('products').upload(fileName, file, { cacheControl: '3600', upsert: false })
+    const fileName = `icons/category-${cat.id}-${Date.now()}.webp`
 
-  if (uploadError) {
-    alert('上传失败：' + uploadError.message)
+    const { error: uploadError } = await supabase.storage.from('products').upload(fileName, compressedFile, { cacheControl: '3600', upsert: false })
+
+    if (uploadError) {
+      alert('上传失败：' + uploadError.message)
+      return
+    }
+
+    const { data } = supabase.storage.from('products').getPublicUrl(fileName)
+
+    const { error: updateError } = await supabase.from('categories').update({ icon_url: data.publicUrl }).eq('id', cat.id)
+
+    if (updateError) {
+      alert('保存失败：' + updateError.message)
+    } else {
+      cat.icon_url = data.publicUrl
+    }
+  } catch (err) {
+    console.error('图片压缩失败:', err.message)
+  } finally {
     cat._iconUploading = false
-    return
+    event.target.value = ''
   }
-
-  const { data } = supabase.storage.from('products').getPublicUrl(fileName)
-
-  const { error: updateError } = await supabase.from('categories').update({ icon_url: data.publicUrl }).eq('id', cat.id)
-
-  if (updateError) {
-    alert('保存失败：' + updateError.message)
-  } else {
-    cat.icon_url = data.publicUrl
-  }
-
-  cat._iconUploading = false
-  event.target.value = ''
 }
 
 const filteredProducts = computed(() => {
