@@ -255,6 +255,57 @@
         </div>
       </Transition>
     </Teleport>
+
+    <!-- 热销选择弹窗 -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div v-if="showHotModal" class="fixed inset-0 bg-black/40 z-[70] flex items-center justify-center" @click.self="closeHotModal">
+          <div class="bg-white rounded-2xl w-[400px] max-h-[80vh] flex flex-col overflow-hidden shadow-2xl">
+            <div class="px-6 py-5 border-b border-outline-variant">
+              <h3 class="text-[18px] font-semibold text-[#3A302A]">热销位已满（最多3个）</h3>
+              <p class="text-[13px] text-on-surface-variant mt-1">拖拽调整顺序，或取消热销</p>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4">
+              <draggable
+                v-model="hotProducts"
+                item-key="id"
+                handle=".drag-handle"
+                ghost-class="opacity-50"
+                @end="onHotOrderChange"
+                class="space-y-2"
+              >
+                <template #item="{ element: p, index }">
+                  <div class="flex items-center justify-between p-4 rounded-xl border border-outline-variant hover:border-primary/50 transition-colors group bg-white">
+                    <div class="flex items-center gap-3">
+                      <span class="material-symbols-outlined text-on-surface-variant/40 cursor-grab drag-handle">drag_indicator</span>
+                      <span class="text-[12px] font-bold text-primary bg-primary/10 w-6 h-6 rounded-full flex items-center justify-center">{{ index + 1 }}</span>
+                      <img v-if="p.image_url" :src="p.image_url" class="w-12 h-12 rounded-lg object-cover" />
+                      <div v-else class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center">
+                        <span class="material-symbols-outlined text-on-surface-variant">image</span>
+                      </div>
+                      <div>
+                        <p class="text-[14px] font-medium text-[#3A302A]">{{ p.name }}</p>
+                        <p class="text-[12px] text-on-surface-variant">¥{{ p.price }}</p>
+                      </div>
+                    </div>
+                    <button
+                      @click="removeHotAndAddNew(p)"
+                      class="px-3 py-1.5 rounded-lg text-[12px] font-medium text-error border border-error/30 hover:bg-error/10 transition-colors"
+                    >取消热销</button>
+                  </div>
+                </template>
+              </draggable>
+            </div>
+            <div class="px-6 py-4 border-t border-outline-variant flex justify-end">
+              <button
+                @click="closeHotModal"
+                class="px-6 py-2 rounded-full text-[13px] font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors border border-outline-variant"
+              >关闭</button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -264,6 +315,7 @@ import { supabase } from '../utils/supabase.js'
 import ProductDrawer from '../components/ProductDrawer.vue'
 import { useCategories } from '../composables/useCategories.js'
 import imageCompression from 'browser-image-compression'
+import draggable from 'vuedraggable'
 
 const { categories, fetchCategories, addCategory, deleteCategory } = useCategories()
 
@@ -274,6 +326,26 @@ const editingProduct = ref(null)
 const deleteTarget = ref(null)
 const loading = ref(true)
 const products = ref([])
+
+// 热销选择弹窗
+const showHotModal = ref(false)
+const pendingHotProduct = ref(null)
+
+const hotProducts = computed({
+  get: () => products.value.filter(p => p.is_hot).sort((a, b) => (a.hot_order || 0) - (b.hot_order || 0)),
+  set: (val) => {
+    // 更新顺序
+    val.forEach((p, idx) => {
+      p.hot_order = idx + 1
+    })
+  }
+})
+
+async function onHotOrderChange() {
+  for (const p of hotProducts.value) {
+    await supabase.from('products').update({ hot_order: p.hot_order }).eq('id', p.id)
+  }
+}
 
 // 分类管理
 const showCategoryManager = ref(false)
@@ -302,6 +374,7 @@ function mapRow(row) {
     active: row.status,
     is_hot: row.is_hot || false,
     is_recommended: row.is_recommended || false,
+    hot_order: row.hot_order || 0,
     image: cacheBustedUrl,
     image_url: row.image_url,
   }
@@ -524,17 +597,52 @@ async function toggleHot(product) {
   if (newVal) {
     const hotCount = products.value.filter(p => p.is_hot).length
     if (hotCount >= 3) {
-      alert('热销位已满（最多3个），请先取消一个')
+      pendingHotProduct.value = product
+      showHotModal.value = true
       return
     }
   }
 
   product.is_hot = newVal
-  const { error } = await supabase.from('products').update({ is_hot: newVal }).eq('id', product.id)
-  if (error) {
-    console.error('更新热销失败:', error.message)
-    product.is_hot = !newVal
+  if (newVal) {
+    // 新增热销时，设为最大排序号
+    const maxOrder = products.value.filter(p => p.is_hot).reduce((max, p) => Math.max(max, p.hot_order || 0), 0)
+    product.hot_order = maxOrder + 1
+    const { error } = await supabase.from('products').update({ is_hot: newVal, hot_order: product.hot_order }).eq('id', product.id)
+    if (error) {
+      console.error('更新热销失败:', error.message)
+      product.is_hot = !newVal
+    }
+  } else {
+    const { error } = await supabase.from('products').update({ is_hot: newVal, hot_order: 0 }).eq('id', product.id)
+    if (error) {
+      console.error('更新热销失败:', error.message)
+      product.is_hot = !newVal
+    }
   }
+}
+
+async function removeHotAndAddNew(targetProduct) {
+  // 取消目标商品的热销
+  targetProduct.is_hot = false
+  targetProduct.hot_order = 0
+  await supabase.from('products').update({ is_hot: false, hot_order: 0 }).eq('id', targetProduct.id)
+
+  // 添加新商品为热销
+  const newProduct = pendingHotProduct.value
+  newProduct.is_hot = true
+  const maxOrder = products.value.filter(p => p.is_hot).reduce((max, p) => Math.max(max, p.hot_order || 0), 0)
+  newProduct.hot_order = maxOrder + 1
+  await supabase.from('products').update({ is_hot: true, hot_order: newProduct.hot_order }).eq('id', newProduct.id)
+
+  // 关闭弹窗
+  showHotModal.value = false
+  pendingHotProduct.value = null
+}
+
+function closeHotModal() {
+  showHotModal.value = false
+  pendingHotProduct.value = null
 }
 
 async function toggleRecommended(product) {

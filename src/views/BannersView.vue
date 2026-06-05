@@ -27,44 +27,54 @@
     </div>
 
     <div v-else class="space-y-4">
-      <div
-        v-for="banner in banners"
-        :key="banner.id"
-        class="bg-surface-container-lowest rounded-[24px] cream-shadow overflow-hidden flex"
+      <draggable
+        v-model="banners"
+        item-key="id"
+        handle=".drag-handle"
+        ghost-class="opacity-50"
+        @end="onDragEnd"
       >
-        <!-- 图片预览 -->
-        <div class="w-80 h-48 shrink-0 bg-surface-container-low">
-          <img :src="banner.image_url" class="w-full h-full object-cover" />
-        </div>
-        <!-- 信息 -->
-        <div class="flex-1 p-6 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-3 mb-2">
-              <span v-if="banner.tag" class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-medium">{{ banner.tag }}</span>
-              <span
-                class="px-2.5 py-0.5 rounded-full text-[11px] font-medium"
-                :class="banner.is_active ? 'bg-[#E8F5E9] text-[#2E7D32]' : 'bg-surface-container-highest text-on-surface-variant'"
-              >{{ banner.is_active ? '展示中' : '已隐藏' }}</span>
+        <template #item="{ element: banner }">
+          <div class="bg-surface-container-lowest rounded-[24px] cream-shadow overflow-hidden flex mb-4">
+            <!-- 拖拽手柄 -->
+            <div class="w-10 shrink-0 flex items-center justify-center bg-surface-container-low cursor-grab drag-handle">
+              <span class="material-symbols-outlined text-on-surface-variant/40">drag_indicator</span>
             </div>
-            <h3 class="text-[18px] font-semibold text-on-surface">{{ banner.title }}</h3>
-            <p class="text-[13px] text-on-surface-variant mt-1">{{ banner.subtitle }}</p>
+            <!-- 图片预览 -->
+            <div class="w-80 h-48 shrink-0 bg-surface-container-low">
+              <img :src="banner.image_url" class="w-full h-full object-cover" />
+            </div>
+            <!-- 信息 -->
+            <div class="flex-1 p-6 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-3 mb-2">
+                  <span v-if="banner.tag" class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-medium">{{ banner.tag }}</span>
+                  <span
+                    class="px-2.5 py-0.5 rounded-full text-[11px] font-medium"
+                    :class="banner.is_active ? 'bg-[#E8F5E9] text-[#2E7D32]' : 'bg-surface-container-highest text-on-surface-variant'"
+                  >{{ banner.is_active ? '展示中' : '已隐藏' }}</span>
+                </div>
+                <h3 class="text-[18px] font-semibold text-on-surface">{{ banner.title }}</h3>
+                <p class="text-[13px] text-on-surface-variant mt-1">{{ banner.subtitle }}</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <button
+                  @click="toggleActive(banner)"
+                  class="px-4 py-2 rounded-full text-[12px] font-medium border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors"
+                >{{ banner.is_active ? '隐藏' : '展示' }}</button>
+                <button
+                  @click="openEdit(banner)"
+                  class="px-4 py-2 rounded-full text-[12px] font-medium text-primary hover:bg-primary/5 transition-colors"
+                >编辑</button>
+                <button
+                  @click="handleDelete(banner)"
+                  class="px-4 py-2 rounded-full text-[12px] font-medium text-error hover:bg-error/5 transition-colors"
+                >删除</button>
+              </div>
+            </div>
           </div>
-          <div class="flex items-center gap-3">
-            <button
-              @click="toggleActive(banner)"
-              class="px-4 py-2 rounded-full text-[12px] font-medium border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors"
-            >{{ banner.is_active ? '隐藏' : '展示' }}</button>
-            <button
-              @click="openEdit(banner)"
-              class="px-4 py-2 rounded-full text-[12px] font-medium text-primary hover:bg-primary/5 transition-colors"
-            >编辑</button>
-            <button
-              @click="handleDelete(banner)"
-              class="px-4 py-2 rounded-full text-[12px] font-medium text-error hover:bg-error/5 transition-colors"
-            >删除</button>
-          </div>
-        </div>
-      </div>
+        </template>
+      </draggable>
     </div>
 
     <!-- 编辑/添加弹窗 -->
@@ -142,6 +152,7 @@
 import { ref, onMounted } from 'vue'
 import { supabase } from '../utils/supabase.js'
 import imageCompression from 'browser-image-compression'
+import draggable from 'vuedraggable'
 
 const loading = ref(true)
 const banners = ref([])
@@ -247,6 +258,13 @@ async function handleDelete(banner) {
   const { error } = await supabase.from('banners').delete().eq('id', banner.id)
   if (error) { alert('删除失败：' + error.message); return }
   await fetchBanners()
+}
+
+async function onDragEnd() {
+  for (let i = 0; i < banners.value.length; i++) {
+    banners.value[i].sort_order = i + 1
+    await supabase.from('banners').update({ sort_order: i + 1 }).eq('id', banners.value[i].id)
+  }
 }
 </script>
 
